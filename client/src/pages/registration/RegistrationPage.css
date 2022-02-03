@@ -3,3 +3,11 @@
     display: flex !important;
     margin-bottom: 1rem !important;
 }
+
+.reg-button {
+    background-color: var(--dark-blue);
+}
+
+.reg-button:hover {
+    background-color: #04566d;
+}

@@ -1,16 +1,31 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
-import {Stepper, Step, StepLabel, Box, Button, Paper, TextField, Alert} from '@mui/material';
+import {
+    Stepper,
+    Step,
+    StepLabel,
+    Box,
+    Button,
+    Paper,
+    TextField,
+    Alert,
+    MenuItem,
+    Select,
+    InputLabel, FormControl
+} from '@mui/material';
 import StepConnector, { stepConnectorClasses } from '@mui/material/StepConnector';
 import {useState} from "react";
 import MarkEmailReadRoundedIcon from "@mui/icons-material/MarkEmailReadRounded";
 import AssignmentRoundedIcon from "@mui/icons-material/AssignmentRounded";
 import VpnKeyRoundedIcon from "@mui/icons-material/VpnKeyRounded";
+import SendIcon from '@mui/icons-material/Send';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 import {useFormik} from "formik";
 import * as yup from "yup";
-import emailSchema from "../../Validations/UserRegistrationSchema.js";
+import userRegistrationSchema from "../../Validations/UserRegistrationSchema.js";
 
 
 import './RegistrationPage.css';
@@ -111,33 +126,57 @@ export default function RegistrationPage() {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [residentialAddress, setResidentialAddress] = useState('');
-    const [sex, setSex] = useState();
+    const sexes = ['Male', 'Female', 'Other'];
+    const [sex, setSex] = useState('');
 
-
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [confirmPasswordError, setConfirmPasswordError] = useState('');
 
     const formik = useFormik({
         initialValues: {
             email: email,
             confirmEmail: confirmEmail,
             firstName: firstName,
-            lastName: lastName
+            lastName: lastName,
+            residentialAddress: residentialAddress,
+            sex: sex,
+            password: password,
+            confirmPassword: confirmPassword
         },
-        validationSchema: emailSchema,
+        validationSchema: userRegistrationSchema,
         validateOnBlur: true
     });
 
-        const handleEmailChange = (event) => {
-            formik.handleChange(event);
-            setEmail(event.target.value);
-        }
+    const handleEmailChange = (event) => {
+        formik.handleChange(event);
+        setEmail(event.target.value);
+    }
 
+    const handleConfirmEmailChange = (event) => {
+        formik.handleChange(event);
+        setConfirmEmail(event.target.value);
+    }
 
-        const handleConfirmEmailChange = (event) => {
-            formik.handleChange(event);
-            setConfirmEmail(event.target.value);
-        }
+    const handleFirstNameChange = (event) => {
+        formik.handleChange(event);
+        setFirstName(event.target.value);
+    }
 
+    const handleLastNameChange = (event) => {
+        formik.handleChange(event);
+        setLastName(event.target.value);
+    }
 
+    const handleResidentialAddressChange = (event) => {
+        formik.handleChange(event);
+        setResidentialAddress(event.target.value);
+    }
+
+    const handleSexChange = (event) => {
+        formik.handleChange(event);
+        setSex(event.target.value);
+    }
 
     const handleEmailsEquals = () => {
         if(email !== confirmEmail){
@@ -151,6 +190,26 @@ export default function RegistrationPage() {
     const checkIsNotNull = (object) => {
             return !!object;
     }
+
+    const handlePasswordsEquals = () => {
+        if(password !== confirmPassword){
+            setConfirmPasswordError("Password should be equals");
+            return false;
+        }
+        setConfirmPasswordError(null);
+        return true;
+    }
+
+    const handlePasswordChange = (event) => {
+        formik.handleChange(event);
+        setPassword(event.target.value);
+    }
+
+    const handleConfirmPasswordChange = (event) => {
+        formik.handleChange(event)
+        setConfirmPassword(event.target.value);
+    }
+
 
 
     const getAppropriateStep = (step) => {
@@ -185,28 +244,78 @@ export default function RegistrationPage() {
                     <TextField
                         name="firstName"
                         value={firstName}
-                        //onChange={handleFirstNameChange}
-                        error={formik.touched.email && Boolean(formik.errors.email)}
-                        helperText={formik.touched.email && formik.errors.email}
+                        onChange={handleFirstNameChange}
+                        error={formik.touched.firstName && Boolean(formik.errors.firstName)}
+                        helperText={formik.touched.firstName && formik.errors.firstName}
                         onBlur={formik.handleBlur}
                         className="inputs"
-                        label="Email"
+                        label="First name"
                         variant="outlined" />
                     <TextField
                         name="lastName"
                         value={lastName}
-                        //onChange={handleLastNameChange}
-                        error={formik.touched.email && Boolean(formik.errors.email)}
-                        helperText={formik.touched.email && formik.errors.email}
+                        onChange={handleLastNameChange}
+                        error={formik.touched.lastName && Boolean(formik.errors.lastName)}
+                        helperText={formik.touched.lastName && formik.errors.lastName}
                         onBlur={formik.handleBlur}
                         className="inputs"
-                        label="Email"
+                        label="Last name"
                         variant="outlined" />
+                    <TextField
+                        name="residentialAddress"
+                        value={residentialAddress}
+                        onChange={handleResidentialAddressChange}
+                        error={formik.touched.residentialAddress && Boolean(formik.errors.residentialAddress)}
+                        helperText={formik.touched.residentialAddress && formik.errors.residentialAddress}
+                        onBlur={formik.handleBlur}
+                        className="inputs"
+                        label="Residential address"
+                        variant="outlined" />
+                    <FormControl fullWidth>
+                        <InputLabel id="sex-select-label">Sex</InputLabel>
+                        <Select
+                            labelId="sex-select-label"
+                            id="sex-select-label"
+                            helperText="Sex"
+                            name="sex"
+                            variant="outlined"
+                            value={sex}
+                            label="Sex"
+                            onChange={handleSexChange}
+                        >
 
+                            {
+                                sexes.map(sex => <MenuItem id={sex} value={sex}>{sex}</MenuItem>)
+                            }
+                        </Select>
+                    </FormControl>
                 </>
 
             );
-            case 2: return null;
+            case 2: return (
+                <>
+                    <TextField
+                        name="password"
+                        value={password}
+                        type="password"
+                        onChange={handlePasswordChange}
+                        error={formik.touched.password && Boolean(formik.errors.password)}
+                        helperText={formik.touched.password && formik.errors.password}
+                        onBlur={formik.handleBlur}
+                        className="inputs"
+                        label="Password"
+                        variant="outlined" />
+                    <TextField
+                        name="confirmPassword"
+                        type = "password"
+                        value={confirmPassword}
+                        onChange={handleConfirmPasswordChange}
+                        onBlur={handlePasswordsEquals}
+                        className="inputs"
+                        label="Confirm password"
+                        variant="outlined" />
+                    {confirmPasswordError ? <Alert severity="error">{confirmPasswordError}</Alert> : null}
+                </>);
         }
     }
 
@@ -223,8 +332,20 @@ export default function RegistrationPage() {
                         setActiveState(activeState + 1);
                         return;
                     }
-
-
+                    return;
+                }
+                case 1: {
+                    formik.submitForm();
+                    if(checkIsNotNull(firstName)
+                        && checkIsNotNull(lastName)
+                        && checkIsNotNull(residentialAddress)
+                        && !Boolean(formik.errors.firstName)
+                        && !Boolean(formik.errors.lastName)
+                        && !Boolean(formik.errors.resedentialAdress)
+                        && !Boolean(formik.errors.sex)){
+                        setActiveState(activeState + 1);
+                        return;
+                    }
                 }
             }
 
@@ -251,8 +372,33 @@ export default function RegistrationPage() {
                         <Box sx={{width : '80%', m : "2rem auto", flexDirection: "column"}}>
                             <Paper sx={{width : '80%', padding: '1rem', m : "0.5rem auto", display: "flex", flexDirection: "column"}} elevation={1} >
                                 {getAppropriateStep(activeState)}
-                                <Button onClick={handleNext}>Next</Button>
-                                <Button onClick={handlePrev}>Prev</Button>
+                                <Box sx={{display:"flex", flexDirection:"row", justifyContent: "flex-end", mt: "1rem"}}>
+                                    {activeState === 0 ?
+                                        null :
+                                        <Button
+                                        className="reg-button"
+                                        sx={{mr:"0.6rem"}}
+                                        variant="contained"
+                                        onClick={handlePrev}
+                                        startIcon={<ArrowBackIosIcon />}
+                                        >
+                                            Prev
+                                        </Button>}
+                                    {activeState === 2 ?
+                                        <Button className="reg-button" variant="contained" endIcon={<SendIcon />}>
+                                            Send
+                                        </Button> :
+                                        <Button
+                                            className="reg-button"
+                                            variant="contained"
+                                            onClick={handleNext}
+                                            endIcon={<ArrowForwardIosIcon />}
+                                        >
+                                            Next
+                                        </Button>}
+
+                                </Box>
+
                             </Paper>
                         </Box>
                     </Paper>
