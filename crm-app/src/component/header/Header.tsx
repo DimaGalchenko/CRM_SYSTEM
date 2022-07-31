@@ -15,6 +15,8 @@ function Header() {
         setAnchorEl(null)
     }
 
+    const isAuthenticated = false
+
     return (
         <div>
             <AppBar position='relative' color='secondary' >
@@ -30,7 +32,7 @@ function Header() {
                             CRM SYSTEM
                         </Typography>
                     </Grid>
-                    <Grid className={'left-nav-items'} item xs={6}>
+                    { isAuthenticated ? <Grid className={'left-nav-items'} item xs={6}>
                         <Button color='primary' variant='text'
                             id='organization-button'
                             aria-controls={open ? 'organization-menu' : undefined}
@@ -77,7 +79,7 @@ function Header() {
                             <MenuItem onClick={handleClose}>Org 2</MenuItem>
                             <MenuItem onClick={handleClose}>Org 3</MenuItem>
                         </Menu>
-                    </Grid>
+                    </Grid> : null}
                 </Grid>
 
 
